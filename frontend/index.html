@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Tier App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        h1 { color: #232f3e; }
+        button {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        button:hover { background-color: #e68900; }
+        #response {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f0f2f5;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Three Tier AWS App</h1>
+        <p>Frontend → Backend → Database</p>
+        <button onclick="callBackend()">Call Backend API</button>
+        <div id="response"></div>
+    </div>
+    <script>
+        async function callBackend() {
+            const responseDiv = document.getElementById('response');
+            responseDiv.style.display = 'block';
+            responseDiv.innerText = 'Calling backend...';
+            try {
+                const res = await fetch('http://3.237.97.244:8080');
+                const data = await res.json();
+                responseDiv.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                responseDiv.innerText = 'Error: ' + err.message;
+            }
+        }
+    </script>
+</body>
+</html>
