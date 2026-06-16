@@ -16,7 +16,7 @@ EC2 t3.micro (public subnet) — Backend API
     ↓
 RDS PostgreSQL 15.7 (private subnet) — Database
 ```
-
+![Architecture Diagram](docs/architecture.png)
 ---
 
 ## Tech Stack
