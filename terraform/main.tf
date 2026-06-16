@@ -98,7 +98,8 @@ resource "aws_route_table_association" "public_2" {
 
 # Secrets Manager - DB Credentials
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "three-tier-db-credentials"
+  name                    = "three-tier-db-credentials"
+  recovery_window_in_days = 0
 
   tags = {
     Name = "three-tier-db-credentials"
@@ -130,11 +131,11 @@ resource "aws_security_group" "rds" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
-  }
+  from_port       = 5432
+  to_port         = 5432
+  protocol        = "tcp"
+  security_groups = [aws_security_group.backend.id]
+}
 
   egress {
     from_port   = 0
@@ -164,6 +165,7 @@ resource "aws_db_instance" "main" {
   vpc_security_group_ids = [aws_security_group.rds.id]
 
   skip_final_snapshot = true
+  backup_retention_period = 7
   publicly_accessible = false
 
   tags = {
@@ -398,7 +400,32 @@ output "rds_endpoint" {
 resource "aws_s3_object" "index" {
   bucket       = aws_s3_bucket.frontend.id
   key          = "index.html"
-  source       = "../frontend/index.html"
+  content      = templatefile("../frontend/index.html", {
+    backend_ip = aws_instance.backend.public_ip
+  })
   content_type = "text/html"
-  etag         = filemd5("../frontend/index.html")
+  etag         = md5(templatefile("../frontend/index.html", {
+    backend_ip = aws_instance.backend.public_ip
+  }))
+}
+
+# CloudWatch Alarm - EC2 CPU
+resource "aws_cloudwatch_metric_alarm" "ec2_cpu" {
+  alarm_name          = "three-tier-ec2-cpu-alarm"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 2
+  metric_name         = "CPUUtilization"
+  namespace           = "AWS/EC2"
+  period              = 120
+  statistic           = "Average"
+  threshold           = 80
+  alarm_description   = "EC2 CPU utilization exceeded 80%"
+
+  dimensions = {
+    InstanceId = aws_instance.backend.id
+  }
+
+  tags = {
+    Name = "three-tier-ec2-cpu-alarm"
+  }
 }
