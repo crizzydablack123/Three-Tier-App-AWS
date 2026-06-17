@@ -89,5 +89,5 @@ Terraform will output the CloudFront URL, EC2 public IP, and RDS endpoint after 
 
 ## Author
 
-Cristian — IT Support Analyst transitioning into Cloud Engineering
+Cristian — IT Support Analyst transitioning into Cloud Engineering.
 [GitHub](https://github.com/cristianxcueva)
