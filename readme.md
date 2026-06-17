@@ -68,6 +68,8 @@ terraform apply
 
 Terraform will output the CloudFront URL, EC2 public IP, and RDS endpoint after apply completes.
 
+**Tested:** This project has been fully destroyed and redeployed from scratch via `terraform apply` with zero manual intervention — confirming the entire stack (networking, RDS, EC2, S3, CloudFront) rebuilds correctly and the dynamic IP injection works as designed.
+
 ---
 
 ## Known Limitations
